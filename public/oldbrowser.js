@@ -20,87 +20,13 @@
 
       if (ok) return;
 
-      var root = document.createElement('div');
-      root.setAttribute('role', 'alert');
-      root.style.position = 'fixed';
-      root.style.top = '0';
-      root.style.left = '0';
-      root.style.right = '0';
-      root.style.zIndex = '99999';
-      root.style.background = '#fffbeb';
-      root.style.color = '#92400e';
-      root.style.padding = '12px 16px';
-      root.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
-      root.style.fontFamily = 'sans-serif';
-      root.style.fontSize = '14px';
-
-      var content = document.createElement('div');
-      content.style.display = 'flex';
-      content.style.alignItems = 'center';
-      content.style.justifyContent = 'space-between';
-      content.style.gap = '12px';
-
-      var left = document.createElement('div');
-      left.style.flex = '1';
-      var title = document.createElement('strong');
-      title.style.display = 'block';
-      title.style.marginBottom = '4px';
-      title.textContent = 'Your browser or operating system is out of date';
-      var p = document.createElement('div');
-      p.textContent = 'This site requires a modern browser. Please update your browser or operating system for security and best experience.';
-      left.appendChild(title);
-      left.appendChild(p);
-
-      var links = document.createElement('div');
-      links.style.marginTop = '6px';
-      function makeLink(href, text) {
-        var a = document.createElement('a');
-        a.href = href;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        a.style.marginRight = '8px';
-        a.style.color = 'inherit';
-        a.style.textDecoration = 'underline';
-        a.textContent = text;
-        return a;
-      }
-      links.appendChild(makeLink('https://www.google.com/chrome/', 'Chrome'));
-      links.appendChild(makeLink('https://www.mozilla.org/firefox/new/', 'Firefox'));
-      links.appendChild(makeLink('https://www.microsoft.com/edge', 'Edge'));
-      links.appendChild(makeLink('https://support.apple.com/downloads/safari', 'Safari'));
-      left.appendChild(links);
-
-      var btnWrap = document.createElement('div');
-      var btn = document.createElement('button');
-      btn.textContent = 'Dismiss';
-      btn.style.background = '#92400e';
-      btn.style.color = '#fff';
-      btn.style.border = 'none';
-      btn.style.padding = '8px 12px';
-      btn.style.borderRadius = '6px';
-      btn.style.cursor = 'pointer';
-      btn.onclick = function () {
-        try {
-          localStorage.setItem(key, '1');
-        } catch (e) {}
-        if (root.parentNode) root.parentNode.removeChild(root);
-        if (spacer && spacer.parentNode) spacer.parentNode.removeChild(spacer);
-      };
-      btnWrap.appendChild(btn);
-
-      content.appendChild(left);
-      content.appendChild(btnWrap);
-      root.appendChild(content);
-
-      var spacer = document.createElement('div');
-      spacer.style.height = '64px';
-
-      var b = document.body || document.getElementsByTagName('body')[0];
-      if (b) {
-        b.insertBefore(root, b.firstChild);
-        b.insertBefore(spacer, root.nextSibling);
-      } else {
-        document.documentElement.insertBefore(root, document.documentElement.firstChild);
+      // If an old browser is detected, redirect to the static informational page.
+      try {
+        if (window && window.location && window.location.pathname && window.location.pathname.indexOf('/oldbrowser.html') === -1) {
+          window.location.replace('/oldbrowser.html');
+        }
+      } catch (e) {
+        // ignore any redirect errors
       }
     } catch (e) {}
   }
