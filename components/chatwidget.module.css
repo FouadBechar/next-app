@@ -1,0 +1,9 @@
+.toggleVisible { display: block; }
+.toggleHidden { display: none; }
+.chatBoxOpen { display: flex; }
+.chatBoxClosed { display: none; }
+.chatMessages { overflow-y: auto; max-height: 300px; }
+.bubbleAnim { animation: fadeInUp 0.4s ease-out; }
+.svgIcon { width: 1em; height: 1em; vertical-align: middle; fill: currentColor; overflow: hidden; }
+.typingDots { display:inline-flex; gap:6px; align-items:center; }
+.srOnly { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }

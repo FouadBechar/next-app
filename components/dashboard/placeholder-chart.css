@@ -1,0 +1,5 @@
+.chart-height{height:var(--hc,300px)}
+.bar-opacity{opacity:var(--op,1)}
+/* small utility to ensure bars have rounded top and a subtle gradient */
+.bar-opacity{background:linear-gradient(to top, rgba(59,130,246,0.95), rgba(59,130,246,0.7));}
+@media (max-width:640px){.chart-height{height:220px}}

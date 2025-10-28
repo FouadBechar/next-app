@@ -1,0 +1,7 @@
+/* Styles for the old browser overlay (loaded as a static file to avoid inline styles) */
+.rb-old-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);z-index:9999999;padding:24px}
+.rb-old-card{max-width:760px;background:#111;color:#fff;padding:20px;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.6)}
+.rb-old-actions{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.rb-old-btn{background:#3a86ff;color:#fff;padding:8px 12px;border-radius:8px;text-decoration:none}
+.rb-old-close{background:transparent;color:#ddd;border:1px solid rgba(255,255,255,0.08);padding:8px 12px;border-radius:8px}
+@media (prefers-reduced-motion: reduce){.rb-old-overlay,.rb-old-card{transition:none}}

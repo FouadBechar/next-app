@@ -1,0 +1,139 @@
+##############################################
+# Security-focused .htaccess for Next.js app
+# Place this file at the Apache document root for the project.
+# NOTE: Next.js is typically deployed with Node/Vercel. .htaccess only
+# applies when you serve the built app through Apache (e.g., using a
+# reverse proxy or static export). Adjust rules to your environment.
+##############################################
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Redirect HTTP -> HTTPS (if not already)
+  # If you're behind a proxy that sets X-Forwarded-Proto, Apache might not
+  # see HTTPS; adapt conditions to your environment.
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+############################################################
+# Basic hardening
+############################################################
+
+# Do not reveal Apache version or other server info
+ServerSignature Off
+
+# Disable directory listing
+Options -Indexes
+
+# Deny access to hidden files (dotfiles) and sensitive files
+<FilesMatch "^\.(env|htaccess|gitignore|gitattributes|git|env.example)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# Deny access to commonly sensitive filenames/extensions
+<FilesMatch "(\.(sql|sqlite|env|pem|key|phar|lock)$|^\.env$)">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# Forbid access to internal directories that should never be web-accessible
+<IfModule mod_rewrite.c>
+  RewriteRule ^(?:\.git|node_modules|\.next|db|scripts|\.github)(?:/.*)?$ - [F,L,NC]
+</IfModule>
+
+############################################################
+# HTTP security headers
+############################################################
+<IfModule mod_headers.c>
+  # Prevent MIME sniffing
+  Header always set X-Content-Type-Options "nosniff"
+
+  # Basic XSS protection (older browsers)
+  Header always set X-XSS-Protection "1; mode=block"
+
+  # Clickjacking protection
+  Header always set X-Frame-Options "DENY"
+
+  # Referrer policy
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # Feature-Policy / Permissions-Policy (example: disable camera/mic by default)
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+  # HSTS: enable only if you serve HTTPS site and you control the entire domain
+  Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+</IfModule>
+
+# Content Security Policy - conservative default. Tune to your site resources.
+# WARNING: overly-strict CSP can break scripts/styles; review and adapt.
+<IfModule mod_headers.c>
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; connect-src 'self' https: wss:; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' https: data:;"
+</IfModule>
+
+############################################################
+# Limit HTTP methods
+############################################################
+<IfModule mod_authz_core.c>
+  <LimitExcept GET POST HEAD OPTIONS>
+    Require all denied
+  </LimitExcept>
+</IfModule>
+
+############################################################
+# Static assets caching (tune as needed)
+############################################################
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType text/css "access plus 1 week"
+  ExpiresByType text/javascript "access plus 1 week"
+  ExpiresByType application/javascript "access plus 1 week"
+  ExpiresByType image/jpeg "access plus 1 month"
+  ExpiresByType image/png "access plus 1 month"
+  ExpiresByType image/gif "access plus 1 month"
+  ExpiresByType image/svg+xml "access plus 1 month"
+  ExpiresByType application/font-woff2 "access plus 1 month"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css|jpg|jpeg|png|gif|svg|woff2)$">
+    Header set Cache-Control "public, max-age=2592000, immutable"
+  </FilesMatch>
+</IfModule>
+
+############################################################
+# Prevent execution of scripts inside uploaded files directory
+# If you use a public uploads folder (e.g., /public/uploads), prevent CGI/PHP execution.
+<Directory "/var/www/html/public/uploads">
+  <IfModule mod_php.c>
+    php_admin_flag engine off
+  </IfModule>
+  <IfModule mod_cgi.c>
+    Options -ExecCGI
+  </IfModule>
+  <IfModule mod_mime.c>
+    RemoveHandler .php .phtml .php3
+  </IfModule>
+</Directory>
+
+############################################################
+# Helpful local dev note
+############################################################
+# If you host on platforms like Vercel / Netlify, .htaccess is ignored —
+# use the platform's headers/rewrite settings instead. This file is only
+# for Apache-based deployments (or Apache acting as a reverse proxy).
+
+##############################################
