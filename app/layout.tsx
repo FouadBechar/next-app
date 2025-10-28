@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Head from "next/head";
-// import UnsupportedBrowser from '@/components/UnsupportedBrowser';
 import Script from 'next/script';
 
 export const metadata: Metadata = {
@@ -26,8 +25,7 @@ export default function RootLayout({
       </Head>
       <body className={`antialiased`}>
       {/* lightweight non-blocking fallback for very old browsers (ES5) */}
-      <Script src="/oldbrowser.js" strategy="afterInteractive" />
-        {/* <UnsupportedBrowser /> */}
+      <Script src="https://fouadbechar.vercel.app/oldbrowser.js" strategy="afterInteractive" />
         {children}
 
       </body>
