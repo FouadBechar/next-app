@@ -11,6 +11,7 @@ import {
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
+import CloseIcon from '@/components/icons/close';
 
 interface AuthFormProps {
   title: string;
@@ -43,9 +44,10 @@ export function AuthForm({
           onClick={() => { try { window.location.replace('/'); } catch (e) { window.location.href = '/'; } }}
           aria-label="Close"
           title="Close"
-          className="h-10 w-10 flex items-center justify-center rounded-md text-red-600 text-2xl leading-none hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400"
+          className="h-10 w-10 flex items-center justify-center rounded-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 shadow-sm hover:shadow-md transition-shadow duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400"
         >
-          <span aria-hidden="true">&times;</span>
+          {/* reusable close icon */}
+          <CloseIcon className="h-5 w-5" />
         </button>
       </div>
       <Card className="w-full max-w-md shadow-lg">
