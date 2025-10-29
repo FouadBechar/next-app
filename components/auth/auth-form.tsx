@@ -11,7 +11,6 @@ import {
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
-import { useRouter } from 'next/navigation';
 
 interface AuthFormProps {
   title: string;
@@ -26,7 +25,7 @@ export function AuthForm({
   children,
   footer,
 }: AuthFormProps) {
-  const router = useRouter();
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -41,7 +40,7 @@ export function AuthForm({
       <div className="absolute top-4 left-4">
         <button
           type="button"
-          onClick={() => router.push('/')}
+          onClick={() => { try { window.location.replace('/'); } catch (e) { window.location.href = '/'; } }}
           aria-label="Close"
           title="Close"
           className="h-10 w-10 flex items-center justify-center rounded-md text-red-600 text-2xl leading-none hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400"
