@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "predev": "node ./scripts/generate-browsers.mjs || true",
     "build": "next build --turbopack",
+    "prebuild": "node ./scripts/generate-browsers.mjs",
     "postbuild": "node ./scripts/generate-sitemap.mjs",
     "generate-sitemap": "node ./scripts/generate-sitemap.mjs",
     "start": "next start"
@@ -35,8 +37,9 @@
     "tailwind-merge": "^3.3.1",
     "typeit": "^8.8.7",
     "zod": "^4.1.12"
-  },
+    },
   "devDependencies": {
+    "browserslist": "^4.22.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -45,5 +48,19 @@
     "tailwindcss": "^4",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "last 2 versions",
+      "not dead",
+      "not IE 11"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
+
 }

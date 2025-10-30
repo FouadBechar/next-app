@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Navigateur obsolète — Mise à jour requise</title>
+  <meta name="description" content="Votre navigateur est trop ancien pour afficher ce site correctement. Mettez à jour votre navigateur pour de meilleures performances et sécurité." />
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; margin:0; padding:20px; background:#f3f4f6; color:#111 }
+    .wrap { max-width:820px; margin:48px auto; background:#fff; padding:24px; border-radius:8px; box-shadow:0 8px 32px rgba(2,6,23,0.06) }
+    h1 { margin-top:0 }
+    p { line-height:1.5 }
+    .browsers a { display:inline-block; margin-right:12px; margin-top:8px; color:#2563eb }
+    .actions { margin-top:18px }
+    .btn { display:inline-block; padding:10px 14px; border-radius:6px; text-decoration:none; color:#fff; background:#2563eb }
+    .secondary { background:#6b7280 }
+    .note { margin-top:12px; color:#555; font-size:13px }
+  </style>
+</head>
+<body>
+  <div class="wrap" role="main">
+    <h1>Navigateur obsolète</h1>
+    <p>Ce site utilise des fonctionnalités web modernes. Votre navigateur actuel ne prend pas en charge certaines d'entre elles et l'affichage peut être incorrect ou instable.</p>
+
+    <p class="browsers">Téléchargez un navigateur moderne :
+      <a href="https://www.google.com/chrome/" target="_blank" rel="noopener noreferrer">Chrome</a>
+      <a href="https://www.mozilla.org/firefox/new/" target="_blank" rel="noopener noreferrer">Firefox</a>
+      <a href="https://www.microsoft.com/edge" target="_blank" rel="noopener noreferrer">Edge</a>
+      <a href="https://support.apple.com/downloads/safari" target="_blank" rel="noopener noreferrer">Safari</a>
+    </p>
+
+    <div class="actions">
+      <button id="continueBtn" class="btn">Continuer malgré tout</button>
+      <a href="/" class="btn secondary" id="homeLink">Retour à l'accueil</a>
+    </div>
+
+    <p class="note">Si vous continuez, certaines fonctionnalités peuvent ne pas fonctionner. Pour ne plus voir cet avertissement, cliquez sur "Continuer malgré tout". Cette action sera mémorisée localement dans votre navigateur.</p>
+  </div>
+
+  <script>
+    (function () {
+      var STORAGE_KEYS = ['rb:oldBrowserDismissed', 'unsupported_browser_dismissed_v1'];
+      function writeDismiss() {
+        try {
+          for (var i = 0; i < STORAGE_KEYS.length; i++) {
+            try { localStorage.setItem(STORAGE_KEYS[i], JSON.stringify({ t: Date.now() })); } catch (e) {}
+          }
+        } catch (e) {}
+      }
+
+      var btn = document.getElementById('continueBtn');
+      if (btn) {
+        btn.addEventListener('click', function () {
+          writeDismiss();
+          try {
+            if (document.referrer) window.location.replace(document.referrer);
+            else window.location.replace('/');
+          } catch (e) { window.location.replace('/'); }
+        }, false);
+      }
+    })();
+  </script>
+</body>
+</html>
