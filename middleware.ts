@@ -1,16 +1,17 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { updateSession } from '@/utils/supabase/middleware';
+import { MIN_VERSIONS } from '@/lib/generated-browsers';
 
-// Conservative minimum major versions for browsers we consider "supported".
-const MIN_VERSIONS: Record<string, number> = {
+// Conservative built-in fallback versions (used if generated data lacks a key).
+const FALLBACK_MIN_VERSIONS: Record<string, number> = {
   chrome: 80,
   edge: 80,
   firefox: 78,
   safari: 13,
   ios_saf: 13,
-};
+}
 
-const SKIP_PATHS = ['/unsupported', '/oldbrowser.html'];
+const SKIP_PATHS = ['/unsupported'];
 
 function isBot(ua: string) {
   if (!ua) return false;
@@ -90,7 +91,10 @@ export async function middleware(request: NextRequest) {
       return sessRes;
     }
 
-    const min = MIN_VERSIONS[info.name as keyof typeof MIN_VERSIONS];
+    // Prefer the generated MIN_VERSIONS, fall back to conservative defaults when missing.
+    const genMin = (MIN_VERSIONS as Record<string, number>)[info.name];
+    const fallbackMin = FALLBACK_MIN_VERSIONS[info.name as keyof typeof FALLBACK_MIN_VERSIONS];
+    const min = typeof genMin === 'number' ? genMin : fallbackMin;
     if (typeof min === 'number' && info.version < min) {
       return NextResponse.redirect(new URL('/unsupported', request.url));
     }
