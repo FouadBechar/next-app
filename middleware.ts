@@ -90,7 +90,6 @@ export async function middleware(request: NextRequest) {
       }
       return sessRes;
     }
-
     // Prefer the generated MIN_VERSIONS, fall back to conservative defaults when missing.
     const genMin = (MIN_VERSIONS as Record<string, number>)[info.name];
     const fallbackMin = FALLBACK_MIN_VERSIONS[info.name as keyof typeof FALLBACK_MIN_VERSIONS];
