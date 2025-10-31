@@ -723,10 +723,10 @@ h1 {
   border-radius: 10px 10px 0 0;
 }
 .svg-icon-001 {
-  width: "1em";
-  height: "1em";
-  vertical-align: "middle";
-  fill: "currentColor";
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+  fill: currentColor;
   overflow: hidden;
 }
 .img707,
