@@ -90,7 +90,7 @@ export async function POST(request: Request) {
       `;
 
       await resend.emails.send({
-        from: 'contact@fouadbechar.x10.mx',
+        from: 'fouad@bechar.x10.network',
         to: email,
         subject: 'We received your message',
         html,

@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 
         if (res.data.properties?.email_otp) {
           data = await resend.emails.send({
-            from: 'contact@fouadbechar.x10.mx',
+            from: 'fouad@bechar.x10.network',
             to: email,
             subject: isPasswordReset
               ? 'Reset your password'
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
           : `${new URL(request.url).origin}/dashboard`;
 
         data = await resend.emails.send({
-          from: 'contact@fouadbechar.x10.mx',
+          from: 'fouad@bechar.x10.network',
           to: email,
           subject: 'Welcome to our platform!',
           react: WelcomeEmail({
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
           : `${new URL(request.url).origin}/auth/login`;
 
         data = await resend.emails.send({
-          from: 'contact@fouadbechar.x10.mx',
+          from: 'fouad@bechar.x10.network',
           to: email,
           subject: 'Your password has been reset',
           react: PasswordResetConfirmationEmail({
