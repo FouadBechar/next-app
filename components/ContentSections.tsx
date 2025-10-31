@@ -36,7 +36,7 @@ export default function ContentSections() {
         <img
           className="iiim"
           src={image4}
-          alt=""
+          alt="env-image"
           width={400}
           height={224}
         />
@@ -79,7 +79,7 @@ export default function ContentSections() {
             Renewable energy
           </a>
         </h2>
-  <img className="iiim" src={enrg} alt="" width={400} height={224} />
+  <img className="iiim" src={enrg} alt="energ-image" width={400} height={224} />
         <p className="b3">
           Renewable energy is energy derived from natural sources that are
           replenished at a higher rate than they are consumed. Sunlight and
@@ -125,7 +125,7 @@ export default function ContentSections() {
         <img
           className="iim"
           src={image5}
-          alt=""
+          alt="socil-image"
           width={300}
           height={192}
         />
@@ -376,7 +376,7 @@ export default function ContentSections() {
             height={224}
           />{" "}
         </a>{" "}
-        <div className="container010101 loadicon010101">
+        <div className="container010101">
           {" "}
           <h2 className="h2010101"> Defining Artificial Intelligence </h2>{" "}
           <p className="p010101">
@@ -485,7 +485,7 @@ export default function ContentSections() {
               personalized streaming.
             </li>
           </ul>
-          <h2 className="h20101012 animate0110">The Future of AI</h2>
+          <h2 className="h20101012">The Future of AI</h2>
           <p className="p010101">
             AI is an evolving field with significant potential. Continued
             research and development will likely lead to even more sophisticated
@@ -632,15 +632,15 @@ export default function ContentSections() {
         </div>
       </div>
 
-      <div className="f113">
-        <div id="text7" className="ff113 animate0110">
+      <div className="f113 animate0110">
+        <div id="text7" className="ff11303">
           {section7}
         </div>
       </div>
 
       <Slideshow />
 
-      <div id="text10" className="ai-card-grid">
+      <div id="text10" className="ai-card-grid animate0110">
         {section10}
       </div>
 

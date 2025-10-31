@@ -20,13 +20,15 @@ function ServerOverlay() {
         .rb-old-actions{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
         .rb-old-btn{background:#3a86ff;color:#fff;padding:8px 12px;border-radius:8px;text-decoration:none}
         .rb-old-close{background:transparent;color:#ddd;border:1px solid rgba(255,255,255,0.08);padding:8px 12px;border-radius:8px}
+        .rb-old-h2{margin:0 0 8px}
+        .rb-old-p{margin:0 0 8px}
         @media (prefers-reduced-motion: reduce){.rb-old-overlay,.rb-old-card{transition:none}}
       `}} />
 
       <div className="rb-old-overlay" role="dialog" aria-modal="true">
         <div className="rb-old-card" tabIndex={-1}>
-          <h2 style={{ margin: '0 0 8px' }}>Important notice</h2>
-          <p style={{ margin: '0 0 8px' }}>
+          <h2 className="rb-old-h2">Important notice</h2>
+          <p className="rb-old-p">
             Your browser or device appears to be out of date and some features on this site may not
             work correctly. For best performance and security, please update your browser.
           </p>
@@ -42,11 +44,6 @@ function ServerOverlay() {
         </div>
       </div>
 
-      {/*
-        Lightweight, ES5-friendly inline script to provide the same behavior as the previous
-        `public/oldbrowser.js` logic: dismissal storage, Escape key to close, and focus on the
-        card. Inline so the page is fully self-contained (no external JS fetch required).
-      */}
       <script dangerouslySetInnerHTML={{ __html: inlineScript }} />
     </main>
   )

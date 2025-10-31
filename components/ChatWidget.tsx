@@ -40,30 +40,7 @@ export default function ChatWidget() {
   const [isTyping, setIsTyping] = useState(false);
   const messagesRef = useRef<HTMLDivElement | null>(null);
 
-  // Inject minimal CSS for typing dots and sr-only helper (keeps component self-contained)
-  useEffect(() => {
-    const css = `
-      .typing-dots { display:inline-flex; gap:6px; align-items:center; }
-      .typing-dots span { display:inline-block; width:6px; height:6px; background:currentColor; border-radius:50%; opacity:0.25; transform:translateY(0); animation:dotPulse 1s infinite linear; }
-      .typing-dots span:nth-child(1){ animation-delay:0s; }
-      .typing-dots span:nth-child(2){ animation-delay:0.15s; }
-      .typing-dots span:nth-child(3){ animation-delay:0.3s; }
-      @keyframes dotPulse { 0% { opacity:0.25; transform:translateY(0);} 50%{ opacity:1; transform:translateY(-4px);} 100%{ opacity:0.25; transform:translateY(0);} }
-      @media (prefers-reduced-motion: reduce) { .typing-dots span { animation: none; opacity: 0.7; transform: none; } }
-      .sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-    `;
-    const style = document.createElement("style");
-    style.setAttribute("data-generated-by", "ChatWidget");
-    style.appendChild(document.createTextNode(css));
-    document.head.appendChild(style);
-    return () => {
-      try {
-        document.head.removeChild(style);
-      } catch (err) {
-        console.debug("ChatWidget style cleanup error", err);
-      }
-    };
-  }, []);
+  // Removed injected CSS; styles are now managed in app/globals.css
 
   useEffect(() => {
     // load history
@@ -206,12 +183,12 @@ export default function ChatWidget() {
         id="chat-toggle"
         type="button"
         onClick={() => setOpen(true)}
-        style={{ display: open ? "none" : "block" }}
+        className={open ? "hidden" : ""}
       >
         <img src={icon} alt="chat Logo" width="50px" height="31px" />
       </button>
 
-      <div id="chat-box" style={{ display: open ? "flex" : "none" }}>
+      <div id="chat-box" className={open ? "open" : ""}>
         <div id="chat-header">
           <span>
             <img className="img707" src={icons03} alt="icons03" />
@@ -224,17 +201,9 @@ export default function ChatWidget() {
           </button>
         </div>
 
-        <div
-          id="chat-messages"
-          ref={messagesRef}
-          style={{ overflowY: "auto", maxHeight: 300 }}
-        >
+        <div id="chat-messages" ref={messagesRef}>
           {messages.map((m, idx) => (
-            <div
-              className={`bubble ${m.role}`}
-              key={idx}
-              style={{ animation: "fadeInUp 0.4s ease-out" }}
-            >
+            <div className={`bubble ${m.role}`} key={idx}>
               <div className="bubble-content">
                 {typeof m.text === "string"
                   ? sanitizeLinksReact(m.text)
@@ -251,12 +220,12 @@ export default function ChatWidget() {
               aria-atomic="true"
             >
               <div className="bubble-content">
-                <span className="typing-dots" aria-hidden="true">
+                <span className="chatwidget-typing-dots" aria-hidden="true">
                   <span></span>
                   <span></span>
                   <span></span>
                 </span>
-                <span className="sr-only">Bot is typing…</span>
+                <span className="chatwidget-sr-only">Bot is typing…</span>
               </div>
             </div>
           )}
@@ -285,14 +254,7 @@ export default function ChatWidget() {
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="svg-icon"
-              style={{
-                width: "1em",
-                height: "1em",
-                verticalAlign: "middle",
-                fill: "currentColor",
-                overflow: "hidden",
-              }}
+              className="svg-icon-001"
               viewBox="0 0 1024 1024"
               version="1.1"
             >
@@ -304,3 +266,4 @@ export default function ChatWidget() {
     </>
   );
 }
+
