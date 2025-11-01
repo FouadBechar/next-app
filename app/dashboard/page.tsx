@@ -5,6 +5,7 @@ import { WelcomeSection } from '@/components/dashboard/welcome-section';
 import { StatsCard } from '@/components/dashboard/stats-card';
 import { ActivityList } from '@/components/dashboard/activity-list';
 import { PlaceholderChart } from '@/components/dashboard/placeholder-chart';
+import TimeseriesChart from '@/components/dashboard/timeseries-chart';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
@@ -15,54 +16,115 @@ export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Dashboard data
+  const [profileName, setProfileName] = useState<string | null>(null);
+  const [activities, setActivities] = useState<Array<any>>([]);
+  const [timeseries, setTimeseries] = useState<Array<{date:string;value:number}>>([]);
+  const [stats, setStats] = useState<{ loginCount: number; lastLogin?: string; securityScore?: string; accountStatus?: string } | null>(null);
+
   useEffect(() => {
-    async function getUser() {
+    async function getUserAndData() {
       const supabase = createClient();
       const {
         data: { session },
       } = await supabase.auth.getSession();
 
-      if (session?.user) {
-        setUser(session.user);
+      if (!session?.user) {
+        setIsLoading(false);
+        return;
+      }
+
+      setUser(session.user);
+
+      // Fetch profile from server-side endpoint
+      try {
+        const res = await fetch(`/api/dashboard/profile?userId=${session.user.id}`);
+        if (res.ok) {
+          const body = await res.json();
+          const p = body?.profile;
+          const name = p?.full_name || p?.username || session.user.email?.split('@')[0] || null;
+          setProfileName(name);
+        } else {
+          setProfileName(session.user.email?.split('@')[0] || null);
+        }
+      } catch (err) {
+        console.debug('Profile fetch error', err);
+        setProfileName(session.user.email?.split('@')[0] || null);
+      }
+
+      // Fetch recent activities from server-side endpoint
+      try {
+        const res = await fetch(`/api/dashboard/activities?userId=${session.user.id}`);
+        if (res.ok) {
+          const body = await res.json();
+          const acts = Array.isArray(body?.activities) ? body.activities : [];
+          const mapped = acts.map((a: any) => ({
+            id: a.id,
+            title: a.title,
+            description: a.description,
+            timestamp: new Date(a.timestamp).toLocaleString(),
+          }));
+          setActivities(mapped);
+        } else {
+          setActivities([]);
+        }
+      } catch (err) {
+        console.debug('Activities fetch error', err);
+        setActivities([]);
+      }
+
+      // Fetch timeseries data for chart
+      try {
+        const tRes = await fetch(`/api/dashboard/timeseries?userId=${session.user.id}`);
+        if (tRes.ok) {
+          const body = await tRes.json();
+          const series = Array.isArray(body?.series) ? body.series : [];
+          setTimeseries(series.map((s: any) => ({ date: s.date, value: Number(s.value || 0) })));
+        } else {
+          setTimeseries([]);
+        }
+      } catch (err) {
+        console.debug('Timeseries fetch error', err);
+        setTimeseries([]);
+      }
+
+      // Fetch lightweight stats via server endpoint
+      try {
+        const res = await fetch(`/api/dashboard/stats?userId=${session.user.id}`);
+        if (res.ok) {
+          const body = await res.json();
+          const loginCount = typeof body?.loginCount === 'number' ? body.loginCount : 0;
+          const lastLogin = session.expires_at ? new Date(session.expires_at * 1000).toLocaleString() : undefined;
+          setStats({ loginCount, lastLogin, securityScore: '—', accountStatus: 'Active' });
+        } else {
+          setStats({ loginCount: 0, securityScore: '—', accountStatus: 'Active' });
+        }
+      } catch (err) {
+        console.debug('Stats fetch error', err);
+        setStats({ loginCount: 0, securityScore: '—', accountStatus: 'Active' });
       }
 
       setIsLoading(false);
     }
 
-    getUser();
+    getUserAndData();
   }, []);
 
-  // Mock data for the dashboard
-  const mockActivities = [
-    {
-      id: '1',
-      title: 'Account Created',
-      description: 'Your account was successfully created',
-      timestamp: '2 hours ago',
-    },
-    {
-      id: '2',
-      title: 'Email Verified',
-      description: 'Your email address has been verified',
-      timestamp: '1 hour ago',
-    },
-    {
-      id: '3',
-      title: 'Password Updated',
-      description: 'Your password was updated successfully',
-      timestamp: '30 minutes ago',
-    },
-  ];
-
   if (isLoading) {
-    return null; // Loading state is handled by the layout
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[200px]">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary" />
+        </div>
+      </DashboardLayout>
+    );
   }
 
   return (
     <DashboardLayout>
       {/* Welcome Section */}
       <WelcomeSection
-        userName=""
+        userName={profileName || ''}
         userEmail={user?.email || 'user@example.com'}
       />
 
@@ -70,30 +132,30 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
         <StatsCard
           title="Login Count"
-          value="5"
-          description="Total logins this month"
+          value={(stats?.loginCount ?? 0).toString()}
+          description="Total logins"
           icon={<UserIcon className="h-5 w-5" />}
           delay={0.1}
         />
         <StatsCard
           title="Last Login"
-          value="Today"
+          value={stats?.lastLogin ? stats.lastLogin : '—'}
           description="Last accessed the platform"
           icon={<ClockIcon className="h-5 w-5" />}
           delay={0.2}
         />
         <StatsCard
           title="Security Score"
-          value="85%"
+          value={stats?.securityScore ?? '—'}
           description="Your account security rating"
           icon={<ShieldIcon className="h-5 w-5" />}
-          change={{ value: '10%', positive: true }}
+          change={{ value: 'N/A', positive: true }}
           delay={0.3}
         />
         <StatsCard
           title="Account Status"
-          value="Active"
-          description="Your account is in good standing"
+          value={stats?.accountStatus ?? 'Unknown'}
+          description="Current account status"
           icon={<CheckCircleIcon className="h-5 w-5" />}
           delay={0.4}
         />
@@ -110,13 +172,19 @@ export default function DashboardPage() {
               </Button>
             </CardHeader>
             <CardContent>
-              <PlaceholderChart variant="area" height={250} showToggle={true} />
+              {timeseries && timeseries.length ? (
+                <TimeseriesChart data={timeseries} height={250} />
+              ) : (
+                <PlaceholderChart variant="area" height={250} showToggle={true} />
+              )}
             </CardContent>
           </Card>
         </div>
 
         <div className="lg:col-span-1">
-          <ActivityList activities={mockActivities} />
+          <ActivityList activities={activities.length ? activities : [
+            { id: '1', title: 'No recent activity', description: 'We did not find recent events.', timestamp: '' }
+          ]} />
         </div>
       </div>
 
